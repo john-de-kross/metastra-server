@@ -1,10 +1,11 @@
 const User = require('../MODELS/userModel');
+const jwt = require('jsonwebtoken');
 
 exports.createUser = async (req, res, next) => {
     try {
         const { firstname, surname, gender, email, phone, dob, password } = req.body;
         const userEmail = await User.findOne({ email }).exec();
-        const userPhone = await User.findOne({ phone }).exec();
+        const userPhone = await User.findOne({ phone }).exec();  
         
         if (!firstname) return res.status(400).json({ success: 'fail', message: 'Firstname is required' });
         if (!surname) return res.status(400).json({ success: 'fail', message: 'Surname is required' });
@@ -18,7 +19,7 @@ exports.createUser = async (req, res, next) => {
         if (password.length < 8) return res.status(400).json({ success: 'fail', message: 'Password must have at least 8 characters' });
 
 
-        const validateAge = dob => {
+        const validateAge = dob => { 
             const birthDate = new Date(dob);
             const today = new Date();
             let age = today.getFullYear() - birthDate.getFullYear();
