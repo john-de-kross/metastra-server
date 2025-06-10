@@ -19,7 +19,7 @@ exports.sendOtp = async (req, res) => {
             host: 'smtp.gmail.com',
             secure: true,
             auth: {
-                user: process.env.GMAIL,
+                user: process.env.GMAIL, 
                 pass: process.env.GMAIL_PASSWORD
             }
             
