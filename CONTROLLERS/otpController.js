@@ -29,7 +29,7 @@ exports.sendOtp = async (req, res) => {
             from: process.env.GMAIL,
             to: email,
             subject: 'Your OTP Code',
-            text: `Your OTP code to complete your verification is ${otp}\nIt will expire in 10 minutes`
+            text: `Your OTP code to complete your verification is ${otp}.It will expire in 10 minutes`
         }
 
         try {
