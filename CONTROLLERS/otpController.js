@@ -16,7 +16,7 @@ exports.sendOtp = async (req, res) => {
 
 
         const transporter = nodemailer.createTransport({
-            host: smtp.gmail.com,
+            host: 'smtp.gmail.com',
             secure: true,
             auth: {
                 user: process.env.GMAIL,
@@ -87,7 +87,7 @@ exports.otpVerification = async (req, res, next) => {
         
         user.isVerified = true;
         await user.save();
-        
+
         const token = jwt.sign(
             { id: user._id, email: user.email },
             process.env.JWT_SECRET,
