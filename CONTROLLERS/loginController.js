@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt')
 exports.loginUser = async (req, res, next) => {
     try {
         const { email, password } = req.body;
+        console.log(email, password)
 
         const user = await User.findOne({ email });
         
@@ -25,7 +26,7 @@ exports.loginUser = async (req, res, next) => {
             })
         }
 
-        if (isPassword && user && !user.isVerified) {
+        if (!user.isVerified) {
             return res.status(401).json({
                 success: false,
                 message: 'User is not verified' 
