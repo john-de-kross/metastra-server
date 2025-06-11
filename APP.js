@@ -20,11 +20,12 @@ app.use(cors({
     optionsSuccessStatus: 200 
 })); 
 
-app.use('/api/v1/users', userRoutes);
 app.use((req, res, next) => {
     console.log(req.method, req.path);
     next()
 })
+
+app.use('/api/v1/users', userRoutes);
 
 
 module.exports = app;  
