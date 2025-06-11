@@ -7,7 +7,6 @@ exports.loginUser = async (req, res, next) => {
 
         const user = await User.findOne({ email });
         
-
         if (!user) {
             return res.status(404).json({
                 success: false,
@@ -29,11 +28,11 @@ exports.loginUser = async (req, res, next) => {
         if (isPassword && user && !user.isVerified) {
             return res.status(401).json({
                 success: false,
-                message: 'User is not verified'
+                message: 'User is not verified' 
             })
         }
 
-        return re.status(200).json({
+        return res.status(200).json({
             success: true,
             message: 'Login successful'
         })
