@@ -21,9 +21,10 @@ app.use(cors({
 })); 
 
 app.use('/api/v1/users', userRoutes);
-
-app.get('/', (req, res) => {
-    res.send('API is running...');
+app.use((req, res, next) => {
+    console.log(req.method, req.path);
+    next()
 })
+
 
 module.exports = app;  

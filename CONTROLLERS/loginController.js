@@ -15,8 +15,8 @@ exports.loginUser = async (req, res, next) => {
             })
         }
 
-        const hashedPass = user.password;
-        const isPassword = await bcrypt.compare(password, hashedPass);
+        
+        const isPassword = await bcrypt.compare(password, user.password);
 
         if (!isPassword) {
             return res.status(400).json({
