@@ -26,7 +26,7 @@ exports.loginUser = async (req, res, next) => {
             })
         }
 
-        if (isPasword && user && !user.isVerified) {
+        if (isPassword && user && !user.isVerified) {
             return res.status(401).json({
                 success: false,
                 message: 'User is not verified'
