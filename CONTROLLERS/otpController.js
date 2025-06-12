@@ -29,7 +29,7 @@ exports.sendOtp = async (req, res) => {
             from: process.env.GMAIL,
             to: email,
             subject: 'Your OTP Code',
-            text: `Your OTP code to complete your verification is ${otp}.It will expire in 10 minutes`
+            text: `Your Exclusive METASTRA verification code is here: ${otp}. Hurry, this code is valid for only 10 minutes`
         }
 
         try {
@@ -66,7 +66,7 @@ exports.otpVerification = async (req, res, next) => {
         const user = await User.findOne({ email });
         
         if (!record) {
-            return res.status(404).json({
+            return res.status(404).json({ 
                 success: false,
                 message: 'OTP expired or not found '
             })
