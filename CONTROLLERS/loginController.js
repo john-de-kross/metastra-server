@@ -8,10 +8,7 @@ dotenv.config({path: './config.env'})
 exports.loginUser = async (req, res, next) => {
     try {
         const { email, password } = req.body;
-        console.log(email, password)
-
         const user = await User.findOne({ email }).select('+password');
-        console.log(user.password)
         
         if (!user) {
             return res.status(404).json({
