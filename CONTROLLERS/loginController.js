@@ -1,6 +1,7 @@
 const User = require('../MODELS/userModel');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const AppError = require('../CONTROLLERS/ERROR/appError')
 const dotenv = require('dotenv');
 
 dotenv.config({path: './config.env'})
@@ -11,10 +12,7 @@ exports.loginUser = async (req, res, next) => {
         const user = await User.findOne({ email }).select('+password');
         
         if (!user) {
-            return res.status(404).json({
-                success: false,
-                message: 'Invalid email or password'
-            })
+            return next(new AppError('Invalid email or password', 400));
         }
 
         
@@ -22,22 +20,15 @@ exports.loginUser = async (req, res, next) => {
         console.log(user.password)
 
         if (!isPassword) {
-            return res.status(400).json({
-                success: false,
-                message: 'Invalid email or password'
-
-            })
+            return next(new AppError('Invalid email or password', 400))
         }
 
         if (!user.isVerified) {
-            return res.status(401).json({
-                success: false,
-                message: 'User is not verified' 
-            })
+            return next(new AppError('User is not verified', 401))
         }
 
         const token = jwt.sign(
-            { id: user._id, email: user.email },
+            { id: user._id },
             process.env.JWT_SECRET,
             {expiresIn: '3h'}
         )
@@ -49,10 +40,6 @@ exports.loginUser = async (req, res, next) => {
         })
 
     } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: 'Failed to login user',
-            error: error.message
-        }) 
+        next(error)
     }
 }

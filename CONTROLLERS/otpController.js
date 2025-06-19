@@ -1,20 +1,28 @@
 const generateOtp = require('../GENERATOR/otpGen');
 const Otp = require('../MODELS/otpModel');
 const User = require('../MODELS/userModel')
+const AppError = require('./ERROR/appError')
 const nodemailer = require('nodemailer');
 const dotenv = require('dotenv');
 const jwt = require('jsonwebtoken');
 dotenv.config({ path: './config.env' });
 
 
-exports.sendOtp = async (req, res) => {
+exports.sendOtp = async (req, res, next) => {
     try {
         const { email } = req.body;
+
+        const user = await User.findOne({ email });
+        if (!email) return next(new AppError('Email is required',  400))
+
+        if (!user) return next(new AppError('Email is not registered with METASTRA', 404));
+
+        const userOtp = await Otp.findOne({ email });
+
+        if (userOtp) await userOtp.deleteOne();
+
         const otp = generateOtp();
         await Otp.create({ email, otp });
-
-
-
         const transporter = nodemailer.createTransport({
             host: 'smtp.gmail.com',
             secure: true,
@@ -37,24 +45,17 @@ exports.sendOtp = async (req, res) => {
             res.status(200).json({
                 status: 'success',
                 message: 'OTP sent successfully'
-            })
+            });
+            
         } catch (err) {
-            return res.status(500).json({
-                status: 'fail',
-                message: 'Failed to send OTP',
-                error: err.message
-            })
+            next(err);
         }
         
 
 
         
     } catch (error) {
-        return res.status(500).json({
-            status: 'fail',
-            message: 'Failed to generate OTP',
-            error: error.message
-        })
+        next(error);
     }
 }
 
@@ -64,45 +65,31 @@ exports.otpVerification = async (req, res, next) => {
         const { email, inputOtp } = req.body;
         const record = await Otp.findOne({ email });
         const user = await User.findOne({ email });
-        
+
+        if (!user) return next(new AppError('User not found', 404));
+             
         if (!record) {
-            return res.status(404).json({ 
-                success: false,
-                message: 'OTP expired or not found '
-            })
+            return next(new AppError('Verification code error', 400));
         }
 
-        if (record.otp !== inputOtp) return res.status(400).json({ success: false, message: 'Invalid OTP' });
+        if (record.otp !== inputOtp) return next(new AppError('Verification code error', 400));
 
-
-        await Otp.deleteOne({ email });
-
-        if (!user) {
-            return res.status(404).json({
-                success: false,
-                message: 'User not found' 
-            })
-            
-        }
         
         user.isVerified = true;
         await user.save();
 
         const token = jwt.sign(
-            { id: user._id, email: user.email },
+            { id: user._id },
             process.env.JWT_SECRET,
             {expiresIn: '3h'}
         )
 
-
         res.status(200).json({ success: true, message: 'OTP verified successfully', token });
+
+        await Otp.deleteOne({ email });
 
         
     } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: 'Failed to verify OTP',
-            error: error.message
-        })
+        next(error)
     }
 }

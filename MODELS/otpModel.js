@@ -12,6 +12,11 @@ const otpSchema = new mongoose.Schema({
         required: true
     },
 
+    numOtpSent: {
+        type: Number,
+        default: 0
+    },
+
     createdAt: {
         type: Date,
         default: Date.now,

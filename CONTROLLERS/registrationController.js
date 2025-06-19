@@ -1,5 +1,7 @@
 const User = require('../MODELS/userModel');
 const jwt = require('jsonwebtoken');
+const AppError = require('../CONTROLLERS/ERROR/appError');
+
 
 exports.createUser = async (req, res, next) => {
     try {
@@ -7,16 +9,16 @@ exports.createUser = async (req, res, next) => {
         const userEmail = await User.findOne({ email }).exec();
         const userPhone = await User.findOne({ phone }).exec();  
         
-        if (!firstname) return res.status(400).json({ success: 'fail', message: 'Firstname is required' });
-        if (!surname) return res.status(400).json({ success: 'fail', message: 'Surname is required' });
-        if (!email && !phone) return res.status(400).json({ success: 'fail', message: 'Either email or phone number is required' });
-        if (!password) return res.status(400).json({ success: 'fail', message: 'Password is required' });
-        if (!dob) return res.status(400).json({ success: 'fail', message: 'Provide your date of birth' });
-        if (!gender) return res.status(400).json({ success: 'fail', message: 'Provide your gender'});
+        if (!firstname) return next(new AppError('Firstname is required', 400));
+        if (!surname) return next(new AppError('Surname is required', 400));
+        if (!email && !phone) return next(new AppError('Either email or phone is required', 400));
+        if (!password) return next(new AppError('Password is required', 400));
+        if (!dob) return next(new AppError('Provide your date of birth', 400));
+        if (!gender) return next(new AppError('Provide your gender', 400));
 
-        if (firstname.length < 3) return res.status(400).json({ success: 'fail', message: 'Firstname must be at least 3 characters' });
-        if (surname.length < 3) return res.status(400).json({ success: 'fail', message: 'surname must be at least 3 characters' });
-        if (password.length < 8) return res.status(400).json({ success: 'fail', message: 'Password must have at least 8 characters' });
+        if (firstname.length < 3) return next(new AppError('Firstname must be at least 3 characters', 400));
+        if (surname.length < 3) return next(new AppError('Surname must be at least 3 characters', 400));
+        if (password.length < 8) return next(new AppError('Password must be at least 8 characters', 400));
 
 
         const validateAge = dob => { 
@@ -31,11 +33,11 @@ exports.createUser = async (req, res, next) => {
             return age >= 8;
         };
 
-        if (!validateAge(dob)) return res.status(400).json({ success: 'fail', message: 'It looks like you entered the wrong info. You must be atleast 8 years old' });
+        if (!validateAge(dob)) return next(new AppError('It looks like you entered the wrong info. You must be atleast 8 years old', 400));
         
-        if (userEmail) return res.status(400).json({ success: 'fail', message: 'Email already exists' });
+        if (userEmail) return next(new AppError('Email already exists', 400));
 
-        if (userPhone) return res.status(400).json({ success: 'fail', message: 'Phone number alreay exists' });
+        if (userPhone) return next(new AppError('Phone number already exists', 400));
 
 
         const user = await User.create({
@@ -51,7 +53,7 @@ exports.createUser = async (req, res, next) => {
         if (user) {
             const { password, ...userWithoutPassword } = user.toObject();
             res.status(201).json({
-                success: true,
+                success: true, 
                 message: 'User created successfully',
                 data: userWithoutPassword
             })
@@ -60,11 +62,7 @@ exports.createUser = async (req, res, next) => {
 
         
     } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: 'Failed to register user',
-            error: error.message
-        })
+        next(error)
     }
 
 }
