@@ -24,10 +24,10 @@ exports.loginUser = async (req, res, next) => {
         }
 
         if (!user.isVerified) {
-            return next(new AppError('User is not verified', 401))
+            return next(new AppError('User is not verified', 401));
         }
 
-        const token = jwt.sign(
+        const token = jwt.sign( 
             { id: user._id },
             process.env.JWT_SECRET,
             {expiresIn: '3h'}
@@ -36,7 +36,7 @@ exports.loginUser = async (req, res, next) => {
         res.cookie('jwt', token, {
             expires: new Date(Date.now() + Number(process.env.COOKIE_EXPIRES_IN) * 24 * 60 * 60 * 1000),
             secure: process.env.NODE_ENV === 'production',
-            httpOnly: true,
+            httpOnly: true, 
             sameSite: 'None'
         })
 

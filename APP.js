@@ -13,13 +13,13 @@ app.use(express.json());
 app.use(cors({
     origin: process.env.NODE_ENV === 'production'
         ?
-        'https://metastra.vercel.app'
+        'https://metastra.vercel.app' 
         :
         'http://localhost:5173',
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
-    optionsSuccessStatus: 200
+    optionsSuccessStatus: 200 
 }));
 
 app.use(cookieParser());
