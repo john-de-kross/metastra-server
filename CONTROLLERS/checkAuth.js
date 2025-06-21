@@ -14,6 +14,6 @@ exports.checkAuth = async (req, res,next) => {
 
         })
     } catch (error) {
-        return next(AppError('User not authenticated', 401));
+        return next(new AppError('User not authenticated', 401));
     }
 }
