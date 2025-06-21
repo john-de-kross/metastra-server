@@ -14,7 +14,7 @@ const allowedOrigins = [
   'https://metastra.vercel.app'      // for production
 ];
 
-app.use(cors({
+app.use(cors({ 
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
