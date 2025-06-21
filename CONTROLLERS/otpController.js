@@ -8,7 +8,7 @@ const jwt = require('jsonwebtoken');
 dotenv.config({ path: './config.env' });
 
 
-exports.sendOtp = async (req, res, next) => {
+exports.sendOtp = async (req, res, next) => { 
     try {
         const { email } = req.body;
 

@@ -33,11 +33,19 @@ exports.loginUser = async (req, res, next) => {
             {expiresIn: '3h'}
         )
 
-        return res.status(200).json({
-            success: true,
-            message: 'Login successful',
-            token
+        res.cookie('jwt', token, {
+            expires: new Date(Date.now() + Number(process.env.COOKIE_EXPIRES_IN) * 24 * 60 * 60 * 1000),
+            secure: process.env.NODE_ENV === 'production',
+            httpOnly: true,
+            sameSite: 'Lax'
         })
+
+        res.status(200).json({
+            success: true,
+            message: 'User successfully logged in'
+        })
+       
+
 
     } catch (error) {
         next(error)
