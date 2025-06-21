@@ -9,18 +9,21 @@ const dotenv = require('dotenv');
 
 dotenv.config({ path: './config.env' });
 
-app.use(express.json());
+const allowedOrigins = process.env.NODE_ENV === 'production'
+  ? ['https://metastra.vercel.app']
+  : ['http://localhost:5173'];
+
 app.use(cors({
-    origin: process.env.NODE_ENV === 'production'
-        ?
-        'https://metastra.vercel.app' 
-        :
-        'http://localhost:5173',
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
-    optionsSuccessStatus: 200 
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS')); 
+    }
+  },
+  credentials: true
 }));
+
 
 app.use(cookieParser());
 

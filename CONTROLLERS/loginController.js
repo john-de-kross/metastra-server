@@ -37,7 +37,7 @@ exports.loginUser = async (req, res, next) => {
             expires: new Date(Date.now() + Number(process.env.COOKIE_EXPIRES_IN) * 24 * 60 * 60 * 1000),
             secure: process.env.NODE_ENV === 'production',
             httpOnly: true, 
-            sameSite: 'None'
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'Lax'
         })
 
         res.status(200).json({
