@@ -7,6 +7,8 @@ const globalErrorHandler = require('./CONTROLLERS/ERROR/globalErrorHandler')
 const app = express();
 const dotenv = require('dotenv');
 
+app.use(express.json());
+
 dotenv.config({ path: './config.env' });
 
 const allowedOrigins = [
@@ -31,6 +33,6 @@ app.use(cookieParser());
 
 app.use('/api/v1/users', userRoutes); 
 
-app.use(globalErrorHandler);
+app.use(globalErrorHandler); 
 
 module.exports = app;  
