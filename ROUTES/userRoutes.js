@@ -9,15 +9,17 @@ const { changePassword } = require('../CONTROLLERS/forgetPassController');
 const { checkAuth } = require('../CONTROLLERS/checkAuth');
 const otpLimitRate = require('../MIDDLEWARE/limitRate');
 const {getUserProfile} = require('../CONTROLLERS/profileController');
-const {protect} = require('../MIDDLEWARE/protect');
+const { protect } = require('../MIDDLEWARE/protect');
+const {profilePicsUpdate} = require('../CONTROLLERS/profilePicsController')
 
 router.post('/register', createUser); 
 router.post('/otp', otpLimitRate, sendOtp);
 router.post('/verify', otpVerification); 
-router.post('/login', loginUser);
+router.post('/login', loginUser, otpLimitRate);
 router.get('/check-auth', checkAuth)
 router.post('/change-password', changePassword);
 router.get('/user-profile', protect, getUserProfile);
+router.put('/update-profile-pic', protect, profilePicsUpdate)
 
 
 module.exports = router; 

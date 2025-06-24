@@ -16,6 +16,6 @@ exports.protect = async (req, res, next) => {
         req.user = decoded;
         next()
     } catch (err) {
-        next(new AppError('Access denied! User unauthenticated'))
+        next(new AppError('Access denied! User unauthenticated', 403))
     }
 }

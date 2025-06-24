@@ -34,7 +34,7 @@ exports.loginUser = async (req, res, next) => {
         )
 
         res.cookie('jwt', token, {
-            expires: new Date(Date.now() + Number(process.env.COOKIE_EXPIRES_IN) * 60 * 1000),
+            expires: new Date(Date.now() + Number(process.env.COOKIE_EXPIRES_IN) * 60 * 60 * 1000),
             secure: process.env.NODE_ENV === 'production',
             httpOnly: true, 
             sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'Lax'
