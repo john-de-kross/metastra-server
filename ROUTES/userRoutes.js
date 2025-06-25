@@ -21,7 +21,7 @@ router.get('/check-auth', checkAuth);
 router.post('/change-password', changePassword);
 router.get('/user-profile', protect, getUserProfile);
 router.put('/update-profile-pic', protect, profilePicsUpdate); 
-router.put('./update-cover-pic', protect, uploadCoverPics);
+router.put('/update-cover-pic', protect, uploadCoverPics);
 
 
 
