@@ -9,11 +9,14 @@ exports.uploadCoverPics = async (req, res, next) => {
         const user = await User.findById(req.user.id);
         if (!user) return next(new AppError('User not found', 404));
 
-        const data = await user.findByIdAndUpdate(req.user.id, { coverPics: coverPic });
+        const data = await User.findByIdAndUpdate(req.user.id, { coverPics: coverPic });
 
         res.status(200).json({
             success: true,
-            message: 'Cover-picture successfully updated'
+            message: 'Cover-picture successfully updated',
+            data: {
+                data
+            }
         })
         
        
