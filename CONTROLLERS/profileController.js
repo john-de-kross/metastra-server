@@ -50,7 +50,7 @@ exports.createAboutUser = async (req, res, next) => {
 
 exports.aboutProfile = async (req, res, next) => {
     try {
-        const userAboutProfile = await AboutUser.findById(req.user.id);
+        const userAboutProfile = await AboutUser.findOne({user: req.user.id});
 
         if (!userAboutProfile) return next(new AppError('User not found', 404))
         
