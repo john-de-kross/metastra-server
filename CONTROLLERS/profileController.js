@@ -1,5 +1,6 @@
 const User = require('../MODELS/userModel');
-const AppError = require('../CONTROLLERS/ERROR/appError')
+const AppError = require('../CONTROLLERS/ERROR/appError');
+const AboutUser = require('../MODELS/aboutProfile');
 
 
 exports.getUserProfile = async (req, res, next) => {
@@ -20,5 +21,47 @@ exports.getUserProfile = async (req, res, next) => {
         
     } catch (error) {
         next(error)
+    }
+}
+
+exports.createAboutUser = async (req, res, next) => {
+    try {
+        const { work, relationship, education, location, bio } = req.body;
+        const user = await User.findById(req.user.id);
+
+        if (!user) return next(new AppError('User not found', 404));
+
+        const data = await AboutUser.create({user: req.user.id, work, relationship, education, location, bio });
+
+        res.status(201).json({
+            success: true,
+            message: 'About user profile created',
+            data: {
+                data
+            }
+        })
+
+
+    } catch (error) {
+        next(error);
+    }
+}
+
+
+exports.aboutProfile = async (req, res, next) => {
+    try {
+        const userAboutProfile = await AboutUser.findById(req.user.id);
+
+        if (!userAboutProfile) return next(new AppError('User not found', 404))
+        
+        res.status(200).json({
+            success: true,
+            message: "Success",
+            data: {
+                userAboutProfile
+            }
+        })
+    } catch (err) {
+        next(err)
     }
 }
