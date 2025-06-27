@@ -28,7 +28,7 @@ const AboutUserSchema = mongoose.Schema({
     relationship: {
         type: String,
         required: true,
-        enum: ['Single', 'Married', 'Engaged', 'Complicated'], 
+        enum: ['Single', 'Married', 'Engaged', 'It\'s  complicated', 'Divorced', 'Separated', 'In a relationship', 'Widowed'], 
         default: 'Single',
     },
 
