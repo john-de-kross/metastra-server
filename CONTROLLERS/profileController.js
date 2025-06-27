@@ -31,11 +31,12 @@ exports.createAboutUser = async (req, res, next) => {
 
         if (!user) return next(new AppError('User not found', 404));
 
-        const data = await AboutUser.create({user: req.user.id, work, relationship, education, location, bio });
+        const data = await AboutUser.findOneAndUpdate({ user: req.user.id },
+            { work, relationship, education, location, bio }, {new: true, upsert: true, runValidators: true});
 
         res.status(201).json({
             success: true,
-            message: 'About user profile created',
+            message: 'About user profile Updated',
             data: {
                 data
             }

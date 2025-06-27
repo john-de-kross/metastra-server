@@ -10,32 +10,32 @@ const AboutUserSchema = mongoose.Schema({
     },
     work: {
         type: String,
-        required: true,
+        default: ""
         
     },
     
     education: {
         type: String,
-        required: true,
+        default: ""
         
     },
 
     location: {
         type: String,
-        required: true,
+        default: ''
     },
 
     relationship: {
         type: String,
         required: true,
-        enum: ['Single', 'Married', 'Engaged', 'Complicated'],
+        enum: ['Single', 'Married', 'Engaged', 'Complicated'], 
         default: 'Single',
     },
 
     bio: {
         type: String,
         maxlength: 160,
-        required: true,
+        default: ""
 
     },
 
