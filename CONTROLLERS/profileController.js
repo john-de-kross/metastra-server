@@ -1,6 +1,8 @@
 const User = require('../MODELS/userModel');
 const AppError = require('../CONTROLLERS/ERROR/appError');
 const AboutUser = require('../MODELS/aboutProfile');
+const SendRequest = require('../MODELS/requestModel');
+const Friends = require('../MODELS/friendsModel');
 
 
 exports.getUserProfile = async (req, res, next) => {
@@ -64,5 +66,42 @@ exports.aboutProfile = async (req, res, next) => {
         })
     } catch (err) {
         next(err)
+    }
+}
+
+
+exports.suggestedUsers = async (req, res, next) => {
+    try {
+
+        const currentUserId = req.user.id;
+        const existingFriend = await Friends.find({ me: currentUserId }).select('friend');
+        const sentRequest = await SendRequest.find({ sender: currentUserId }).select('receiver');
+        const notVerified = await User.find({ isVerified: false });
+        
+
+
+        //get there IDs
+        const existingFriendId = existingFriend.map(f => f.friend.toString());
+        const sentRequestId = sentRequest.map(request => request.toString());
+        const notVerifiedId = notVerified.map(notId => notId._id);
+        
+
+        const users = await User.find({
+            _id: {
+                $nin: [currentUserId, ...existingFriendId, ...sentRequestId, ...notVerifiedId],
+
+            }
+        }).select('firstname surname profilePics')
+        
+        res.status(200).json({
+            message: "success",
+            success: true,
+            data: {
+                users
+            }
+
+        })
+    } catch (error) {
+        next(error);
     }
 }

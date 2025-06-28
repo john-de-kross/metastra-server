@@ -10,7 +10,7 @@ mongoose
   .connect(process.env.MONGODB_URL)
   .then(() => console.log("Connected to DB"))
   .catch((err) => console.log(err));
-
+const userSocketMap = new Map();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
@@ -22,8 +22,17 @@ const io = new Server(server, {
 });
 
 io.on('connect', (socket) => {
-  console.log('User connected', socket.id)
-}) 
+  console.log('User connected', socket.id);
+  socket.on('register', (userId) => {
+    userSocketMap.set(userId, socket.id)
+
+  })
+  socket.on('disconnect', () => {
+    for (const [userId, id] of userSocketMap.entries()) {
+      if (id === socket.id) userSocketMap.delete(userId);
+    }
+  })
+});
 
 
 const PORT = process.env.PORT || 5000;  

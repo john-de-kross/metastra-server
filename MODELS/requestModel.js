@@ -17,7 +17,7 @@ const SendFriendRequestSchema = new mongoose.Schema({
     status: {
         type: String,
         enum: ['Pending', 'Accepted', 'Declined'],
-        default: 'Request sent'
+        default: 'Pending'
     },
 
 }, {timestamps: true})
