@@ -1,5 +1,6 @@
 const User = require('../MODELS/userModel');
 const AppError = require('./ERROR/appError');
+const userPost = require('../MODELS/postModel');
 
 exports.profilePicsUpdate = async (req, res, next) => {
     try {
@@ -15,16 +16,16 @@ exports.profilePicsUpdate = async (req, res, next) => {
             profilePics: profilePic
         }, { new: true });
 
+        const post = await userPost.create({imageUrl: profilePic, author: userId})
+
         res.status(200).json({
             success: true,
-            message: "Profile picture updated",
+            message: `Profile picture updated and added to posts`,
             data: {
-                data
+                data,
+                post
             }
         });
-
-        
-
 
     } catch (err) {
         next(err);

@@ -1,17 +1,24 @@
 const mongoose = require('mongoose');
 
 const PostSchema = new mongoose.Schema({
-    content: String,
-    image: String,
     author: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
     },
+    content: {
+        type: String,
+        default: ''
+    },
+
+    imageUrl: {
+        type: String,
+    },
+
     createdAt: {
         type: Date,
         default: Date.now
-    }
+    } 
 
 });
 

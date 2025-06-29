@@ -3,6 +3,7 @@ const AppError = require('../CONTROLLERS/ERROR/appError');
 const AboutUser = require('../MODELS/aboutProfile');
 const SendRequest = require('../MODELS/requestModel');
 const Friends = require('../MODELS/friendsModel');
+const UserPost = require('../MODELS/postModel');
 
 
 exports.getUserProfile = async (req, res, next) => {
@@ -101,6 +102,39 @@ exports.suggestedUsers = async (req, res, next) => {
             }
 
         })
+    } catch (error) {
+        next(error);
+    }
+}
+
+
+exports.viewUserProfile = async (req, res, next) => {
+    try {
+        const userId = req.params.id;
+        const userProfile = await User.findById(userId).select("firstname surname profilePics gender dob createdAt coverPics phone email");
+
+        if (!userProfile) return next(new AppError('USer not found', 404));
+        const friends = await Friends.find({me: userId}).select('friend')
+
+        const userInfo = await AboutUser.findOne({ user: userId }).lean();
+        const userPosts = await UserPost.find({ author: userId })
+            .sort({ createdAt: -1 })
+            .populate('author', 'firstname surname profilePics')
+            .select('content imageUrl createdAt')
+            .lean();
+        
+
+        res.status(200).json({
+            success: true,
+            message: "success",
+            data: {
+                profile: userProfile || {},
+                about: userInfo || {},
+                friends: friends || {},
+                posts: userPosts || {}
+            },
+        });
+        
     } catch (error) {
         next(error);
     }
