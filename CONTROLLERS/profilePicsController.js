@@ -16,7 +16,8 @@ exports.profilePicsUpdate = async (req, res, next) => {
             profilePics: profilePic
         }, { new: true });
 
-        const post = await userPost.create({imageUrl: profilePic, author: userId})
+        const userSex = user?.gender === 'Male' ? "his" : 'her'
+        const post = await userPost.create({imageUrl: profilePic, author: userId, content: `updated ${userSex} profile`})
 
         res.status(200).json({
             success: true,
