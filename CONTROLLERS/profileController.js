@@ -139,3 +139,30 @@ exports.viewUserProfile = async (req, res, next) => {
         next(error);
     }
 }
+
+exports.createPost = async (req, res, next) => {
+    try {
+        const { imageUrl, text } = req.body;
+        const user = await User.findById(req.user.id).exec();
+        if (!user) return next(new AppError('User not found', 404));
+
+        if (!text || imageUrl) return next(new AppError('You can post, no content', 400));
+
+        const post = await UserPost.create({ imageUrl: imageUrl, content: text, isProfile: false, author: req.user.id });
+
+        res.status(201).json({
+            success: true,
+            message: "Post created successfully",
+            data: {
+                post
+            }
+        });
+
+
+
+        
+        
+    } catch (err) {
+        next(err)
+    }
+}

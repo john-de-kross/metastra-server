@@ -8,7 +8,7 @@ const { loginUser } = require('../CONTROLLERS/loginController');
 const { changePassword } = require('../CONTROLLERS/forgetPassController');
 const { checkAuth } = require('../CONTROLLERS/checkAuth');
 const otpLimitRate = require('../MIDDLEWARE/limitRate');
-const {getUserProfile, createAboutUser, aboutProfile, suggestedUsers, viewUserProfile} = require('../CONTROLLERS/profileController');
+const {getUserProfile, createAboutUser, aboutProfile, suggestedUsers, viewUserProfile, createPost} = require('../CONTROLLERS/profileController');
 const { protect } = require('../MIDDLEWARE/protect');
 const { profilePicsUpdate } = require('../CONTROLLERS/profilePicsController');
 const { uploadCoverPics } = require('../CONTROLLERS/coverPicsController');
@@ -27,6 +27,7 @@ router.post('/create-about-profile', protect, createAboutUser);
 router.get('/about-user', protect, aboutProfile)
 router.get('/suggested-users', protect, suggestedUsers);
 router.get('/view-user-profile/:id', protect, viewUserProfile);
+router.post('/post-content', protect, createPost);
 
 
 
