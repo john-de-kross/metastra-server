@@ -15,6 +15,12 @@ const PostSchema = new mongoose.Schema({
         type: String,
     },
 
+    isProfile: {
+        type: Boolean,
+        default: false
+
+    },
+
     createdAt: {
         type: Date,
         default: Date.now

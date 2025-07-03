@@ -14,7 +14,7 @@ exports.uploadCoverPics = async (req, res, next) => {
         await user.save();
         const userSex = user.gender === 'Male' ? 'his' : 'her'
 
-        const posts = await userPosts.create({ content: `updated ${userSex} cover picture`, author: req.user.id, imageUrl: coverPic});
+        const posts = await userPosts.create({ content: `updated ${userSex} cover picture`, author: req.user.id, imageUrl: coverPic, isProfile: true});
         res.status(200).json({
             success: true,
             message: 'Cover-picture successfully updated',
