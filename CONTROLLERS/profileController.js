@@ -148,7 +148,7 @@ exports.createPost = async (req, res, next) => {
 
         if (!text || imageUrl) return next(new AppError('You can post, no content', 400));
 
-        const post = await UserPost.create({ imageUrl: imageUrl, content: text, isProfile: false, author: req.user.id });
+        const post = await UserPost.create({ imageUrl: imageUrl, postText: text, isProfile: false, author: req.user.id });
 
         res.status(201).json({
             success: true,
