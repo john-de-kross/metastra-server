@@ -182,8 +182,6 @@ exports.deletePost = async (req, res, next) => {
         if (!post) return next(new AppError('Post not found', 404));
         if (post.author.toString() !== user._id.toString()) return next(new AppError('Access denied', 403));
 
-        
-
         const postToDelete = await UserPost.findByIdAndDelete(postId);
 
         res.status(200).json({

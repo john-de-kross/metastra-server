@@ -21,10 +21,13 @@ const io = new Server(server, {
 
 });
 
-io.on('connect', (socket) => {
+
+io.on('connection', (socket) => {
   console.log('User connected', socket.id);
+
   socket.on('register', (userId) => {
     userSocketMap.set(userId, socket.id)
+
 
   })
   socket.on('disconnect', () => {
