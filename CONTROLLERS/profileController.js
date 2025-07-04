@@ -166,3 +166,33 @@ exports.createPost = async (req, res, next) => {
         next(err)
     }
 }
+
+
+exports.deletePost = async (req, res, next) => {
+    try {
+        const postId = req.params.id;
+
+        const user = await User.findById(req.user.id);
+
+        if (!user) next(new AppError('User not found', 404));
+
+        if (!postId) return next(new AppError('Post ID is required', 400));
+
+        const post = await UserPost.findById(postId).select("author")
+        if (!post) return next(new AppError('Post not found', 404));
+        if (post.author.toString() !== user._id.toString()) return next(new AppError('Access denied', 403));
+
+        
+
+        const postToDelete = await UserPost.findByIdAndDelete(postId);
+
+        res.status(200).json({
+            success: true,
+            message: "Deleted successfully"
+        })
+
+
+    } catch (err) {
+        next(err);
+    }
+}
