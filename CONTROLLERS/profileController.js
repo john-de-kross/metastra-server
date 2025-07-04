@@ -146,7 +146,7 @@ exports.createPost = async (req, res, next) => {
         const user = await User.findById(req.user.id);
         if (!user) return next(new AppError('User not found', 404));
 
-        if (!text || !imageUrl) return next(new AppError('You cannot post, no content', 400));
+        if (!text && !imageUrl) return next(new AppError('You cannot post, no content', 400));
 
         const post = await UserPost.create({ imageUrl: imageUrl, postText: text, isProfile: false, author: req.user.id });
 
