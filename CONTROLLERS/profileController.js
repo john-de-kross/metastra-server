@@ -120,7 +120,7 @@ exports.viewUserProfile = async (req, res, next) => {
         const userPosts = await UserPost.find({ author: userId })
             .sort({ createdAt: -1 })
             .populate('author', 'firstname surname profilePics')
-            .select('content imageUrl createdAt')
+            .select('content imageUrl postText createdAt')
             .lean();
         
 
