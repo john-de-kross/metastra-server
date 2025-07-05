@@ -4,9 +4,8 @@ const AboutUser = require('../MODELS/aboutProfile');
 const SendRequest = require('../MODELS/requestModel');
 const Friends = require('../MODELS/friendsModel');
 const UserPost = require('../MODELS/postModel');
-const { io } = require('../server');
-const { userSocketMap } = require('../server');
 const postComment = require('../MODELS/commentModel');
+
 
 
 exports.getUserProfile = async (req, res, next) => {
@@ -203,6 +202,8 @@ exports.commentOnPost = async (req, res, next) => {
         const {comment, imageUrl } = req.body;
         const user = await User.findById(req.user.id);
         const postId = req.params.id;
+        const io = req.app.get('io');
+        const userSocketMap = req.app.get('userSocketMap');
         if (!user) return next(new AppError('User not found', 404));
 
         const post = await UserPost.findById(postId);
