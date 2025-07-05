@@ -17,8 +17,7 @@ exports.loginUser = async (req, res, next) => {
 
         
         const isPassword = await bcrypt.compare(password, user.password);
-        console.log(user.password)
-
+        
         if (!isPassword) {
             return next(new AppError('Invalid email or password', 400))
         }

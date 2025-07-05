@@ -4,6 +4,9 @@ const AboutUser = require('../MODELS/aboutProfile');
 const SendRequest = require('../MODELS/requestModel');
 const Friends = require('../MODELS/friendsModel');
 const UserPost = require('../MODELS/postModel');
+const { io } = require('../server');
+const { userSocketMap } = require('../server');
+const postComment = require('../MODELS/commentModel');
 
 
 exports.getUserProfile = async (req, res, next) => {
@@ -193,4 +196,44 @@ exports.deletePost = async (req, res, next) => {
     } catch (err) {
         next(err);
     }
+}
+
+exports.commentOnPost = async (req, res, next) => {
+    try {
+        const {comment, imageUrl } = req.body;
+        const user = await User.findById(req.user.id);
+        const postId = req.params.id;
+        if (!user) return next(new AppError('User not found', 404));
+
+        const post = await UserPost.findById(postId);
+
+        if (!post) return next(new AppError('Post not found', 404));
+
+        if (!comment && !imageUrl) return next(new AppError('You cannot leave comment field empty', 400));
+
+        const userComment = await postComment.create({ post: postId, user: req.user.id, comment: comment });
+
+        res.status(201).json({
+            success: true,
+            message: "user comment created successfully",
+            data: {
+                userComment
+            }
+        })
+
+        
+        // Emit the comment to the post's author
+        const postAuthorSocketId = userSocketMap.get(post.author.toString());
+        if (postAuthorSocketId) {
+            io.to(postAuthorSocketId).emit('newComment', {
+                postId: post._id,
+                comment: userComment
+            });
+        }
+
+
+    } catch (err) {
+        next(err)
+    }
+
 }

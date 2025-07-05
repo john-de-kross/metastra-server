@@ -27,8 +27,6 @@ io.on('connection', (socket) => {
 
   socket.on('register', (userId) => {
     userSocketMap.set(userId, socket.id)
-
-
   })
   socket.on('disconnect', () => {
     for (const [userId, id] of userSocketMap.entries()) {
@@ -41,3 +39,4 @@ io.on('connection', (socket) => {
 const PORT = process.env.PORT || 5000;  
 
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+module.exports = { io, userSocketMap }; 
