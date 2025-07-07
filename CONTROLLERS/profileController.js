@@ -225,6 +225,7 @@ exports.commentOnPost = async (req, res, next) => {
         
         // Emit the comment to the post's author
         const postAuthorSocketId = userSocketMap.get(post.author.toString());
+        console.log("this is from socket", postAuthorSocketId);
         if (postAuthorSocketId) {
             io.to(postAuthorSocketId).emit('newComment', {
                 postId: post._id,
@@ -237,4 +238,4 @@ exports.commentOnPost = async (req, res, next) => {
         next(err)
     }
 
-}
+} 
