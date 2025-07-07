@@ -220,7 +220,10 @@ exports.commentOnPost = async (req, res, next) => {
             data: {
                 userComment
             }
-        })
+        });
+
+        console.log("userSocketMap:", userSocketMap);
+        console.log("post.author:", post.author);
 
         
         // Emit the comment to the post's author
