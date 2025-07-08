@@ -4,7 +4,7 @@ const AboutUser = require('../MODELS/aboutProfile');
 const SendRequest = require('../MODELS/requestModel');
 const Friends = require('../MODELS/friendsModel');
 const UserPost = require('../MODELS/postModel');
-const postComment = require('../MODELS/commentModel');
+const PostComment = require('../MODELS/commentModel');
 
 
 
@@ -212,7 +212,7 @@ exports.commentOnPost = async (req, res, next) => {
 
         if (!comment && !imageUrl) return next(new AppError('You cannot leave comment field empty', 400));
 
-        const userComment = await postComment.create({ post: postId, user: req.user.id, comment: comment });
+        const userComment = await PostComment.create({ post: postId, user: req.user.id, comment: comment });
 
         res.status(201).json({
             success: true,
@@ -242,3 +242,33 @@ exports.commentOnPost = async (req, res, next) => {
     }
 
 } 
+
+exports.getPostComment = async (req, res, next) => {
+    try {
+
+        const postId = req.params.id;
+        const user = await User.findById(req.user.id);
+
+        if (!user) return next(new AppError('User not found', 404));
+
+        if (!postId) return next(new AppError('Post ID is needed', 400));
+
+        const post = await UserPost.findById(postId);
+
+        if (!post) return next(new AppError('Post doesn\'t exist', 404));
+
+        const postComment = await PostComment.find({ post: postId }).sort({createdAt: -1}).populate('user', 'firstname surname');
+
+
+        res.status(200).json({
+            success: true,
+            message: "success",
+            data: {
+                postComment
+            }
+        });
+
+    } catch (err) {
+        next(err);
+    }
+}

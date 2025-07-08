@@ -17,6 +17,7 @@ const {
     createPost,
     deletePost,
     commentOnPost,
+    getPostComment
 } = require('../CONTROLLERS/profileController');
 const { protect } = require('../MIDDLEWARE/protect');
 const { profilePicsUpdate } = require('../CONTROLLERS/profilePicsController');
@@ -39,6 +40,7 @@ router.get('/view-user-profile/:id', protect, viewUserProfile);
 router.post('/post-content', protect, createPost);
 router.delete('/delete-post/:id', protect, deletePost);
 router.post('/comment-on-post/:id', protect, commentOnPost);
+router.get('/get-comments/:id', protect, getPostComment);
 
 
 
