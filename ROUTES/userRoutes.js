@@ -22,6 +22,7 @@ const {
 const { protect } = require('../MIDDLEWARE/protect');
 const { profilePicsUpdate } = require('../CONTROLLERS/profilePicsController');
 const { uploadCoverPics } = require('../CONTROLLERS/coverPicsController');
+const { createRequest} = require('../CONTROLLERS/createFriendRequest')
 
 
 router.post('/register', createUser); 
@@ -41,6 +42,7 @@ router.post('/post-content', protect, createPost);
 router.delete('/delete-post/:id', protect, deletePost);
 router.post('/comment-on-post/:id', protect, commentOnPost);
 router.get('/get-comments/:id', protect, getPostComment);
+router.post('/create-friend-request', protect, createRequest);
 
 
 

@@ -221,14 +221,9 @@ exports.commentOnPost = async (req, res, next) => {
                 userComment
             }
         });
-
-        console.log("userSocketMap:", userSocketMap);
-        console.log("post.author:", post.author);
-
-        
+  
         // Emit the comment to the post's author
         const postAuthorSocketId = userSocketMap.get(post.author.toString());
-        console.log("this is from socket", postAuthorSocketId);
         if (postAuthorSocketId) {
             io.to(postAuthorSocketId).emit('newComment', {
                 postId: post._id,
@@ -253,18 +248,19 @@ exports.getPostComment = async (req, res, next) => {
 
         if (!postId) return next(new AppError('Post ID is needed', 400));
 
-        const post = await UserPost.findById(postId);
+        const post = await UserPost.findById(postId).select('postText imageUrl');
 
         if (!post) return next(new AppError('Post doesn\'t exist', 404));
 
-        const postComment = await PostComment.find({ post: postId }).sort({createdAt: -1}).populate('user', 'firstname surname');
+        const postComment = await PostComment.find({ post: postId }).sort({createdAt: -1}).populate('user', 'firstname surname profilePics ');
 
 
         res.status(200).json({
             success: true,
             message: "success",
             data: {
-                postComment
+                postComment,
+                post
             }
         });
 

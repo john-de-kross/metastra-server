@@ -4,9 +4,12 @@ const AppError = require('../CONTROLLERS/ERROR/appError')
 
 exports.createRequest = async (req, res, next) => {
     try {
-        const { senderId, receiverId } = req.body; 
+        const { receiverId } = req.body; 
+        const senderId = req.user.id;
+        const userSocketMap = req.app.get('userSocketMap');
+        const io = req.app.get('io');
         const sender = await User.findById(senderId ).select('firstname surname');
-        const receiver = await User.findById({ receiverId }).select('firstname surname');
+        const receiver = await User.findById( receiverId ).select('firstname surname');
 
         if (!sender || !receiver) return next(new AppError('Sender or receiver not found', 404)); 
 
@@ -30,7 +33,20 @@ exports.createRequest = async (req, res, next) => {
                 receiver: receiver,
                 request
             }
-        })
+        });
+
+        const senderName = await User.findById(senderId).select('firstname surname');
+
+        const receiverSocketId = userSocketMap.get(receiverId);
+
+        if (receiverSocketId) {
+            io.emit(senderId, {
+                type: 'friendRequest',
+                sender: senderName,
+                requestId: request._id
+            });
+        }
+        
 
     } catch (error) {
         next(error)
