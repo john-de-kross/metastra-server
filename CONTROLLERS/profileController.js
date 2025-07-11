@@ -246,9 +246,9 @@ exports.getPostComment = async (req, res, next) => {
 
         if (!user) return next(new AppError('User not found', 404));
 
-        if (!postId) return next(new AppError('Post ID is needed', 400));
+        if (!postId) return next(new AppError('Post ID is needed', 400)); 
 
-        const post = await UserPost.findById(postId).select('postText imageUrl');
+        const post = await UserPost.findById(postId).populate('author', 'firstname surname').select('postText imageUrl createdAt content');
 
         if (!post) return next(new AppError('Post doesn\'t exist', 404));
 
