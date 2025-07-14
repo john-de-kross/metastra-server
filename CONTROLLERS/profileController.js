@@ -227,6 +227,8 @@ exports.commentOnPost = async (req, res, next) => {
         if (postAuthorSocketId) {
             io.to(postAuthorSocketId).emit('newComment', {
                 postId: post._id,
+                authorId: post.author,
+                commenterId: req.user.id,
                 comment: userComment
             });
         }
