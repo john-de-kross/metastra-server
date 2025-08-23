@@ -270,3 +270,25 @@ exports.getPostComment = async (req, res, next) => {
         next(err);
     }
 }
+
+exports.checkUserOnline = (req, res, next) => {
+    try {
+        const userId = req.params;
+        const io = req.app.get('io')
+        const userSocketMap = req.app.get('userSocketMap')
+
+        const isOnline = userSocketMap.has(userId);
+
+        res.status(200).json({
+            success: true,
+            userId,
+            isOnline
+        })
+
+
+    } catch (err) {
+        next(err)
+    }
+
+
+}

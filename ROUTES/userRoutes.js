@@ -17,7 +17,8 @@ const {
     createPost,
     deletePost,
     commentOnPost,
-    getPostComment
+    getPostComment,
+    checkUserOnline
 } = require('../CONTROLLERS/profileController');
 const { protect } = require('../MIDDLEWARE/protect');
 const { profilePicsUpdate } = require('../CONTROLLERS/profilePicsController');
@@ -43,6 +44,8 @@ router.delete('/delete-post/:id', protect, deletePost);
 router.post('/comment-on-post/:id', protect, commentOnPost);
 router.get('/get-comments/:id', protect, getPostComment);
 router.post('/create-friend-request', protect, createRequest);
+router.post('/check-user-online/:id', protect, checkUserOnline)
+
 
 
 
