@@ -27,11 +27,16 @@ io.on('connection', (socket) => {
   
 
   socket.on('register', (userId) => {
-    userSocketMap.set(userId, socket.id)
+    userSocketMap.set(userId, socket.id);
+
+    io.emit("user-online", userId)
   })
   socket.on('disconnect', () => {
     for (const [userId, id] of userSocketMap.entries()) {
-      if (id === socket.id) userSocketMap.delete(userId);
+      if (id === socket.id) {
+        userSocketMap.delete(userId);
+        socket.emit('user-offline', userId)
+      }
     }
   })
 });
