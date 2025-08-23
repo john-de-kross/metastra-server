@@ -274,18 +274,18 @@ exports.getPostComment = async (req, res, next) => {
 
 exports.checkUserOnline = (req, res, next) => {
   try {
-    const { userId } = req.params;
+    const { id } = req.params;
     const io = req.app.get("io");
     const userSocketMap = req.app.get("userSocketMap");
 
-    const isOnline = userSocketMap.has(userId);
-    console.log("user online id:", userId, "map keys:", [
+    const isOnline = userSocketMap.has(id);
+    console.log("user online id:", id, "map keys:", [
       ...userSocketMap.keys(),
     ]);
 
     res.status(200).json({
       success: true,
-      userId,
+      id,
       isOnline,
     });
   } catch (err) {
