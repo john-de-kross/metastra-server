@@ -37,7 +37,7 @@ io.on("connection", (socket) => {
         //store timestamp
         const lastSeen = new Date();
         lastSeenMap.set(userId, lastSeen)
-        socket.emit("user-offline", {userId, lastSeen});
+        io.emit("user-offline", {userId, lastSeen});
       }
     }
   });
