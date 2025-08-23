@@ -279,7 +279,7 @@ exports.checkUserOnline = (req, res, next) => {
     const userSocketMap = req.app.get("userSocketMap");
 
       const isOnline = userSocketMap.has(userId);
-      console,log(userId)
+      console,log("user online id:", userId)
 
     res.status(200).json({
       success: true,
