@@ -85,7 +85,7 @@ exports.suggestedUsers = async (req, res, next) => {
 
         //get there IDs
         const existingFriendId = existingFriend.map(f => f.friend.toString());
-        const sentRequestId = sentRequest.map(request => request.toString());
+        const sentRequestId = sentRequest.map(request => request.receiver.toString());
         const notVerifiedId = notVerified.map(notId => notId._id);
         
 
