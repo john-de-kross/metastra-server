@@ -32,6 +32,12 @@ io.on("connection", (socket) => {
     io.emit("user-online", userId);
     console.log("userSocketMap:", [...userSocketMap.keys()])
   })
+
+  socket.on("get-user-status", (userId, callback) => {
+    const isOnline = userSocketMap.has(userId);
+    const lastSeen = lastSeenMap.get(userId) || null;
+    callback({ isOnline, lastSeen });
+  })
   socket.on("disconnect", () => {
     for (const [userId, id] of userSocketMap.entries()) {
       if (id === socket.id) {
