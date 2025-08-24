@@ -3,7 +3,9 @@ const mongoose = require("mongoose");
 const http = require("http");
 const dotenv = require("dotenv");
 const { Server } = require("socket.io");
+const User = require("./MODELS/userModel");
 dotenv.config({ path: "./config.env" });
+
 
 mongoose
   .connect(process.env.MONGODB_URL)
@@ -45,8 +47,11 @@ io.on("connection", (socket) => {
         //store timestamp
         const lastSeen = new Date();
         lastSeenMap.set(userId, lastSeen)
+        User.findByIdAndUpdate(userId, { lastSeen }, { new: true }).exec().then((user) => {
+          console.log(user)
+        }).catch(err => console.log(err))
         io.emit("user-offline", { userId, lastSeen });
-        console.log("lastSeenMap:", [...lastSeenMap.keys(), "lastseen:", lastSeen])
+        
       }
     }
   });

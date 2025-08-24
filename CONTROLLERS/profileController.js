@@ -272,3 +272,21 @@ exports.getPostComment = async (req, res, next) => {
   }
 };
 
+exports.checkUserLastSeenStatus = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const user = await User.findById(userId).select('lastSeen');
+    if (!user) return next(new AppError('User does not exist', 404));
+
+    res.status(200).json({
+      success: true,
+      message: 'success',
+      data: {
+        user
+      }
+    })
+  } catch (error) {
+    next(error)
+  }
+
+}
