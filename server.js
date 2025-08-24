@@ -21,17 +21,17 @@ const io = new Server(server, {
 });
 
 
-
+ 
 io.on("connection", (socket) => {
   console.log("User connected", socket.id);
 
   socket.on("register", (userId) => {
     userSocketMap.set(userId, socket.id);
+    console.log("registered Id:", userId)
 
-    io.emit("user-online", (userId) => {
-      console.log('user-online-id:', userId)
-    });
-  });
+    io.emit("user-online", userId);
+    console.log("userSocketMap:", [...userSocketMap.keys()])
+  })
   socket.on("disconnect", () => {
     for (const [userId, id] of userSocketMap.entries()) {
       if (id === socket.id) {
