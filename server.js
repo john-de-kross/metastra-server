@@ -28,7 +28,9 @@ io.on("connection", (socket) => {
   socket.on("register", (userId) => {
     userSocketMap.set(userId, socket.id);
 
-    io.emit("user-online", userId);
+    io.emit("user-online", (userId) => {
+      console.log('user-online-id:', userId)
+    });
   });
   socket.on("disconnect", () => {
     for (const [userId, id] of userSocketMap.entries()) {
@@ -37,7 +39,8 @@ io.on("connection", (socket) => {
         //store timestamp
         const lastSeen = new Date();
         lastSeenMap.set(userId, lastSeen)
-        io.emit("user-offline", {userId, lastSeen});
+        io.emit("user-offline", { userId, lastSeen });
+        console.log("lastSeenMap:", [...lastSeenMap.keys(), "lastseen:", lastSeen])
       }
     }
   });
