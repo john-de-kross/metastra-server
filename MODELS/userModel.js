@@ -102,7 +102,7 @@ const userSchema = new mongoose.Schema({
     },
     lastSeen: {
         type: Date,
-        default: Date.now
+        default: null
     }
     
 }, {timestamps: true});
