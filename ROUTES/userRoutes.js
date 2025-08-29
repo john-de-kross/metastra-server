@@ -18,7 +18,8 @@ const {
     deletePost,
     commentOnPost,
     getPostComment,
-    checkUserLastSeenStatus
+    checkUserLastSeenStatus,
+    getAllRequests
 } = require('../CONTROLLERS/profileController');
 const { protect } = require('../MIDDLEWARE/protect');
 const { profilePicsUpdate } = require('../CONTROLLERS/profilePicsController');
@@ -45,5 +46,5 @@ router.post('/comment-on-post/:id', protect, commentOnPost);
 router.get('/get-comments/:id', protect, getPostComment);
 router.post('/create-friend-request', protect, createRequest);
 router.get('/check-user-last-seen/:userId', protect, checkUserLastSeenStatus);
-
+router.get('/get-all-requests', protect, getAllRequests)
 module.exports = router; 

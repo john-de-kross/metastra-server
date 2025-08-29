@@ -290,3 +290,26 @@ exports.checkUserLastSeenStatus = async (req, res, next) => {
   }
 
 }
+
+exports.getAllRequests = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const user = await User.findById(userId);
+
+    if (!user) return next(new AppError('User not found', 404));
+
+    const requests = await Request.findOne({ receiver: userId }).populate('sender', 'firstname surname profilePics');
+    res.status(200).json({
+      success: true,
+      message: 'success',
+      data: {
+        requests
+      }
+    })
+
+
+    
+  } catch (error) {
+    next(error);
+  }
+}
