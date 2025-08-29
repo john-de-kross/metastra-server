@@ -47,5 +47,5 @@ router.get('/get-comments/:id', protect, getPostComment);
 router.post('/create-friend-request', protect, createRequest);
 router.get('/check-user-last-seen/:userId', protect, checkUserLastSeenStatus);
 router.get('/get-all-requests', protect, getAllRequests)
-router.get('/logout', protect, logOutUser);
+router.post('/logout', protect, logOutUser);
 module.exports = router; 
