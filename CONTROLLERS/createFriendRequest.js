@@ -40,11 +40,10 @@ exports.createRequest = async (req, res, next) => {
         const receiverSocketId = userSocketMap.get(receiverId);
 
         if (receiverSocketId) {
-            io.emit(senderId, {
-                type: 'friendRequest',
-                sender: senderName,
-                requestId: request._id
-            });
+            io.to(receiverSocketId).emit('newFriendRequest', {
+                sender: `${senderName.surname} ${senderName.firstname}`
+            })
+           
         }
         
 

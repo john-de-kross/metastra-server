@@ -50,3 +50,24 @@ exports.loginUser = async (req, res, next) => {
         next(error)
     }
 }
+
+exports.logOutUser = async (req, res, next) => {
+    try {
+        res.clearCookie("jwt", {
+            secure: process.env.NODE_ENV === 'production',
+            httpOnly: true,
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'Lax'
+
+        })
+
+        res.status(200).json({
+            success: true,
+            message: "User successfully logged out"
+        })
+
+        
+        
+    } catch (error) {
+        next(error)
+    }
+}

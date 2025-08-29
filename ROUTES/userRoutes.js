@@ -4,7 +4,7 @@ const router = express.Router();
 
 const { createUser } = require('../CONTROLLERS/registrationController');
 const { sendOtp, otpVerification } = require('../CONTROLLERS/otpController');
-const { loginUser } = require('../CONTROLLERS/loginController');
+const { loginUser, logOutUser } = require('../CONTROLLERS/loginController');
 const { changePassword } = require('../CONTROLLERS/forgetPassController');
 const { checkAuth } = require('../CONTROLLERS/checkAuth');
 const otpLimitRate = require('../MIDDLEWARE/limitRate');
@@ -47,4 +47,5 @@ router.get('/get-comments/:id', protect, getPostComment);
 router.post('/create-friend-request', protect, createRequest);
 router.get('/check-user-last-seen/:userId', protect, checkUserLastSeenStatus);
 router.get('/get-all-requests', protect, getAllRequests)
+router.get('/logout', protect, logOutUser);
 module.exports = router; 
