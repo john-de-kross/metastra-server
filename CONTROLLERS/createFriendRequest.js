@@ -39,9 +39,15 @@ exports.createRequest = async (req, res, next) => {
 
         const receiverSocketId = userSocketMap.get(receiverId);
 
+        const senderFirstName = senderName.firstname;
+        const senderSurname = senderName.surname;
+        const senderCapitalizedFirstName = senderFirstName.charAt(0).toUpperCase() + senderFirstName.slice(1);
+        const senderCapitalizedSurname = senderSurname.charAt(0).toUpperCase() + senderSurname.slice(1);
+
+
         if (receiverSocketId) {
             io.to(receiverSocketId).emit('newFriendRequest', {
-                sender: `${senderName.surname} ${senderName.firstname}`
+                sender: `${senderCapitalizedFirstName} ${senderCapitalizedSurname}`
             })
            
         }
