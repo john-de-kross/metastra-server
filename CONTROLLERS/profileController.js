@@ -298,7 +298,7 @@ exports.getAllRequests = async (req, res, next) => {
 
     if (!user) return next(new AppError('User not found', 404));
 
-    const requests = await SendRequest.findOne({ receiver: userId }).populate('sender', 'firstname surname profilePics');
+    const requests = await SendRequest.find({ receiver: userId }).populate('sender', 'firstname surname profilePics');
     res.status(200).json({
       success: true,
       message: 'success',
