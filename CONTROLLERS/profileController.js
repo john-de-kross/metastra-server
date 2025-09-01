@@ -78,6 +78,7 @@ exports.suggestedUsers = async (req, res, next) => {
       sender: currentUserId,
     }).select("receiver");
     const notVerified = await User.find({ isVerified: false });
+    const receivedReq = await SendRequest.find({sender: currentUserId}).select('sender')
 
     //get there IDs
     const existingFriendId = existingFriend.map((f) => f.friend.toString());
@@ -85,6 +86,7 @@ exports.suggestedUsers = async (req, res, next) => {
       request.receiver.toString()
     );
     const notVerifiedId = notVerified.map((notId) => notId._id);
+    const receivedReqId = receivedReq.map((id) => id.sender.toString());
 
     const users = await User.find({
       _id: {
@@ -93,6 +95,7 @@ exports.suggestedUsers = async (req, res, next) => {
           ...existingFriendId,
           ...sentRequestId,
           ...notVerifiedId,
+          ...receivedReqId
         ],
       },
     }).select("firstname surname profilePics");
@@ -305,11 +308,31 @@ exports.getAllRequests = async (req, res, next) => {
       data: {
         requests
       }
-    })
-
-
-    
+    }) 
   } catch (error) {
     next(error);
   }
+}
+
+exports.getUserFriendStatus = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const user = await User.findById(req.use.id);
+    const request = await SendRequest(userId);
+    if (!user) return next(new AppError('User not found', 404));
+    if (!userId) return next(new AppError('Parameter is needed for this operation', 400));
+    if (!request) return next(new AppError('Request not found', 404));
+    const userFriendStatus = await SendRequest({ sender: req.user.id, receiver: userId }).select('status');
+
+    res.status(200).json({
+      success: true,
+      message: "Success",
+      data: {
+        userFriendStatus
+      }
+    })
+  } catch (err) {
+    next(err)
+  }
+
 }

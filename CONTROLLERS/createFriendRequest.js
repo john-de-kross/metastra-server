@@ -22,7 +22,8 @@ exports.createRequest = async (req, res, next) => {
 
         const request = await SendRequest.create({
             sender: senderId,
-            receiver: receiverId
+            receiver: receiverId,
+            status: 'Pending'
         });
 
         res.status(201).json({
