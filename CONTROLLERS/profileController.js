@@ -78,7 +78,7 @@ exports.suggestedUsers = async (req, res, next) => {
       sender: currentUserId,
     }).select("receiver");
     const notVerified = await User.find({ isVerified: false });
-    const receivedReq = await SendRequest.find({sender: currentUserId}).select('sender')
+    const receivedReq = await SendRequest.find({receiver: currentUserId}).select('sender')
 
     //get there IDs
     const existingFriendId = existingFriend.map((f) => f.friend.toString());
