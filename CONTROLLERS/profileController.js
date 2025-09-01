@@ -318,12 +318,12 @@ exports.getUserFriendStatus = async (req, res, next) => {
   try {
     const { userId } = req.params;
     const user = await User.findById(req.use.id);
-    const request = await SendRequest(userId);
+     const userFriendStatus = await SendRequest.findOne({ sender: req.user.id, receiver: userId }).select('status');
+   
     if (!user) return next(new AppError('User not found', 404));
     if (!userId) return next(new AppError('Parameter is needed for this operation', 400));
-    if (!request) return next(new AppError('Request not found', 404));
-    const userFriendStatus = await SendRequest.findOne({ sender: req.user.id, receiver: userId }).select('status');
-
+    if (!userFriendStatus) return next(new AppError('Request not found', 404));
+   
     res.status(200).json({
       success: true,
       message: "Success",
