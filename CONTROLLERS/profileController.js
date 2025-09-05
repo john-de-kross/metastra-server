@@ -371,12 +371,16 @@ exports.acceptOrRejectRequest = async (req, res, next) => {
 
     if (!status || !userId) return next(new AppError('Status and userId are required', 400));
 
-    const request = await SendRequest.findOne({
+    const request = await SendRequest.findOneAndUpdate({
       $or: [
         { sender: currentUser, receiver: userId },
         {sender: userId, receiver: currentUser}
-      ]
-    })
+      ],
+  
+    },
+      { status: status },
+      {new: true}
+    )
 
     request.updateOne({ status: status });
 
@@ -384,14 +388,8 @@ exports.acceptOrRejectRequest = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      message: 'success',
-      data: "You're now friends"
+      message: 'success'
     })
-
-    F
-
-    
-
     
   } catch (err) {
     next(err)
