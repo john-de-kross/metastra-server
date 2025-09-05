@@ -382,9 +382,12 @@ exports.acceptOrRejectRequest = async (req, res, next) => {
       {new: true}
     )
 
-    request.updateOne({ status: status });
+    if (!request) return next(new AppError('No request found', 404));
 
-    const friends = await Friends.create({me: currentUser, friend: userId})
+    if (status === "Accepted") {
+      await Friends.create({ me: currentUser, friend: userId });
+    }
+    
 
     res.status(200).json({
       success: true,
