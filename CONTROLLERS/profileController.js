@@ -317,22 +317,44 @@ exports.getAllRequests = async (req, res, next) => {
 exports.getUserFriendStatus = async (req, res, next) => {
   try {
     const { userId } = req.params;
-    const user = await User.findById(req.user.id);
-    const sender = await SendRequest.findOne({ receiver: userId }).select('sender status');
-    const receiver = await SendRequest.findOne({ sender: userId }).select('receiver status');
-    
-    if (!user) return next(new AppError('User not found', 404));
+    const currentUser = req.user.id
+    const profileOwner = await User.findById(userId)
+
     if (!userId) return next(new AppError('Parameter is needed for this operation', 400));
-    if (!userFriendStatus) return next(new AppError('Request not found', 404));
-   
+    if (!profileOwner) return next(new AppError('This user does not exists'));
+
+    const friendRequest = await SendRequest.findOne({
+      $or: [
+        { sender: currentUser, receiver: userId },
+        {sender: userId, receiver: currentUser }
+      ]
+    }).select('sender receiver status')
+
+    let status = "Add friend";
+
+    if (friendRequest) {
+      if (friendRequest.status === "Pending") {
+        if (friendRequest.sender.toString() === currentUser) {
+          status = 'Cancel Request'
+        } else {
+          status = "respond_request"
+        }
+      } else if (friendRequest.status === 'Accepted') {
+        status = 'Friends'
+      }
+    }
+
+
     res.status(200).json({
       success: true,
-      message: "Success",
-      data: {
-        sender,
-        receiver
-      }
+      message: "success",
+      data: {status}
     })
+
+
+   
+    
+  
   } catch (err) {
     next(err)
   }
