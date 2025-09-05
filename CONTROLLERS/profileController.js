@@ -360,3 +360,40 @@ exports.getUserFriendStatus = async (req, res, next) => {
   }
 
 }
+
+exports.acceptOrRejectRequest = async (req, res, next) => {
+  try {
+    const { userId, status } = req.body;
+    const currentUser = req.user.id
+    const user = await User.findById(userId);
+
+    if (!user) return next(new AppError('User does not exists', 404));
+
+    if (!status || !userId) return next(new AppError('Status and userId are required', 400));
+
+    const request = await SendRequest.findOne({
+      $or: [
+        { sender: currentUser, receiver: userId },
+        {sender: userId, receiver: currentUser}
+      ]
+    })
+
+    request.updateOne({ status: status });
+
+    const friends = await Friends.create({me: currentUser, friend: userId})
+
+    res.status(200).json({
+      success: true,
+      message: 'success',
+      data: "You're now friends"
+    })
+
+    F
+
+    
+
+    
+  } catch (err) {
+    next(err)
+  }
+}
