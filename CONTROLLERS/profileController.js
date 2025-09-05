@@ -372,11 +372,8 @@ exports.acceptOrRejectRequest = async (req, res, next) => {
     if (!status || !userId) return next(new AppError('Status and userId are required', 400));
 
     const request = await SendRequest.findOneAndUpdate({
-      $or: [
-        { sender: currentUser, receiver: userId },
-        {sender: userId, receiver: currentUser}
-      ],
-  
+      sender: userId,
+      receiver: currentUser
     },
       { status: status },
       
