@@ -329,7 +329,8 @@ exports.getUserFriendStatus = async (req, res, next) => {
       success: true,
       message: "Success",
       data: {
-        userFriendStatus
+        sender,
+        receiver
       }
     })
   } catch (err) {
