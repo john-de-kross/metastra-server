@@ -379,7 +379,8 @@ exports.acceptOrRejectRequest = async (req, res, next) => {
   
     },
       { status: status },
-      {new: true}
+      
+      {new: true,  runValidators: true}
     )
 
     if (!request) return next(new AppError('No request found', 404));
@@ -387,7 +388,7 @@ exports.acceptOrRejectRequest = async (req, res, next) => {
     if (status === "Accepted") {
       await Friends.create({ me: currentUser, friend: userId });
     }
-    
+
 
     res.status(200).json({
       success: true,
