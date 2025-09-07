@@ -403,7 +403,7 @@ exports.getAllFriends = async (req, res, next) => {
     const friends = await Friends.find({ me: currentUser }).populate('friend', 'firstname surname profilePics');
     res.status(200).json({
       success: true,
-      message: success,
+      message: "success",
       data: {
         friends
       }
