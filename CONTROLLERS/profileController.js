@@ -396,3 +396,18 @@ exports.acceptOrRejectRequest = async (req, res, next) => {
     next(err)
   }
 }
+
+exports.getAllFriends = async (req, res, next) => {
+  try {
+    const currentUser = req.params;
+    const friends = await Friends.find({ me: currentUser }).populate('friend', 'firstname surname profilePics');
+    res.status(200).json({
+      success: true,
+      message: success,
+      data: {
+        friends
+      }
+    })
+
+  }
+}
