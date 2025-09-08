@@ -410,9 +410,9 @@ exports.getAllFriends = async (req, res, next) => {
     ).populate("me", "firstname surname profilePics");
 
     const friendList = friends.map(f => {
-      if (f.me === currentUser) {
+      if (f.me._id.toString() === currentUser) {
         return f.friend;
-      } else if (f.friend === currentUser) {
+      } else {
         return f.me;
       }
     })
