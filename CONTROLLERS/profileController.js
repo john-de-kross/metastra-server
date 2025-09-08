@@ -402,7 +402,9 @@ exports.acceptOrRejectRequest = async (req, res, next) => {
 exports.getAllFriends = async (req, res, next) => {
   try {
     const currentUser = req.user.id;
-    const friends = await Friends.find({ me: currentUser }).populate(
+    const friends = await Friends.find({
+      $or: [{me: currentUser}, {friend: currentUser}]
+    }).populate(
       "friend",
       "firstname surname profilePics"
     );
