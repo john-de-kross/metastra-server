@@ -409,10 +409,10 @@ exports.getAllFriends = async (req, res, next) => {
       "firstname surname profilePics"
     );
     const friendList = friends.map(f => {
-      if (f.me.toString() === currentUser) {
-        return f.friend;
-      } else {
+      if (f.friend.toString() === currentUser) {
         return f.me;
+      } else {
+        return f.friend;
       }
     })
     res.status(200).json({
