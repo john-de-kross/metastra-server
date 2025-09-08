@@ -408,11 +408,18 @@ exports.getAllFriends = async (req, res, next) => {
       "friend",
       "firstname surname profilePics"
     );
+    const friendList = friends.map(f => {
+      if (f.me.toString() === currentUser) {
+        return f.friend;
+      } else {
+        return f.me;
+      }
+    })
     res.status(200).json({
       success: true,
       message: "success",
       data: {
-        friends,
+        friendList,
       },
     });
   } catch (err) {
