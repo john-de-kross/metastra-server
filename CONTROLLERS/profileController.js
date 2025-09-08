@@ -78,7 +78,9 @@ exports.suggestedUsers = async (req, res, next) => {
       sender: currentUserId,
     }).select("receiver");
     const notVerified = await User.find({ isVerified: false });
-    const receivedReq = await SendRequest.find({receiver: currentUserId}).select('sender')
+    const receivedReq = await SendRequest.find({
+      receiver: currentUserId,
+    }).select("sender");
 
     //get there IDs
     const existingFriendId = existingFriend.map((f) => f.friend.toString());
@@ -95,7 +97,7 @@ exports.suggestedUsers = async (req, res, next) => {
           ...existingFriendId,
           ...sentRequestId,
           ...notVerifiedId,
-          ...receivedReqId
+          ...receivedReqId,
         ],
       },
     }).select("firstname surname profilePics");
@@ -278,138 +280,140 @@ exports.getPostComment = async (req, res, next) => {
 exports.checkUserLastSeenStatus = async (req, res, next) => {
   try {
     const { userId } = req.params;
-    const user = await User.findById(userId).select('lastSeen');
-    if (!user) return next(new AppError('User does not exist', 404));
+    const user = await User.findById(userId).select("lastSeen");
+    if (!user) return next(new AppError("User does not exist", 404));
 
     res.status(200).json({
       success: true,
-      message: 'success',
+      message: "success",
       data: {
-        user
-      }
-    })
+        user,
+      },
+    });
   } catch (error) {
-    next(error)
+    next(error);
   }
-
-}
+};
 
 exports.getAllRequests = async (req, res, next) => {
   try {
     const userId = req.user.id;
     const user = await User.findById(userId);
 
-    if (!user) return next(new AppError('User not found', 404));
+    if (!user) return next(new AppError("User not found", 404));
 
-    const requests = await SendRequest.find({ receiver: userId }).populate('sender', 'firstname surname profilePics');
+    const requests = await SendRequest.find({ receiver: userId }).populate(
+      "sender",
+      "firstname surname profilePics"
+    );
     res.status(200).json({
       success: true,
-      message: 'success',
+      message: "success",
       data: {
-        requests
-      }
-    }) 
+        requests,
+      },
+    });
   } catch (error) {
     next(error);
   }
-}
+};
 
 exports.getUserFriendStatus = async (req, res, next) => {
   try {
     const { userId } = req.params;
-    const currentUser = req.user.id
-    const profileOwner = await User.findById(userId)
+    const currentUser = req.user.id;
+    const profileOwner = await User.findById(userId);
 
-    if (!userId) return next(new AppError('Parameter is needed for this operation', 400));
-    if (!profileOwner) return next(new AppError('This user does not exists'));
+    if (!userId)
+      return next(new AppError("Parameter is needed for this operation", 400));
+    if (!profileOwner) return next(new AppError("This user does not exists"));
 
     const friendRequest = await SendRequest.findOne({
       $or: [
         { sender: currentUser, receiver: userId },
-        {sender: userId, receiver: currentUser }
-      ]
-    }).select('sender receiver status')
+        { sender: userId, receiver: currentUser },
+      ],
+    }).select("sender receiver status");
 
     let status = "Add friend";
 
     if (friendRequest) {
       if (friendRequest.status === "Pending") {
         if (friendRequest.sender.toString() === currentUser) {
-          status = 'Cancel Request'
+          status = "Cancel Request";
         } else {
-          status = "respond_request"
+          status = "respond_request";
         }
-      } else if (friendRequest.status === 'Accepted') {
-        status = 'Friends'
+      } else if (friendRequest.status === "Accepted") {
+        status = "Friends";
       }
     }
-
 
     res.status(200).json({
       success: true,
       message: "success",
-      data: {status}
-    })
-
-
-   
-    
-  
+      data: { status },
+    });
   } catch (err) {
-    next(err)
+    next(err);
   }
-
-}
+};
 
 exports.acceptOrRejectRequest = async (req, res, next) => {
   try {
     const { userId, status } = req.body;
-    const currentUser = req.user.id
+    const currentUser = req.user.id;
     const user = await User.findById(userId);
 
-    if (!user) return next(new AppError('User does not exists', 404));
+    if (!user) return next(new AppError("User does not exists", 404));
 
-    if (!status || !userId) return next(new AppError('Status and userId are required', 400));
+    if (!status || !userId)
+      return next(new AppError("Status and userId are required", 400));
 
-    const request = await SendRequest.findOneAndUpdate({
-      sender: userId,
-      receiver: currentUser
-    },
+    const request = await SendRequest.findOneAndUpdate(
+      {
+        sender: userId,
+        receiver: currentUser,
+      },
       { status: status },
-      
-      {new: true,  runValidators: true}
-    )
 
-    if (!request) return next(new AppError('No request found', 404));
+      { new: true, runValidators: true }
+    );
+
+    if (!request) return next(new AppError("No request found", 404));
 
     if (status === "Accepted") {
-      await Friends.create({ me: currentUser, friend: userId });
+      await Friends.updateOne(
+        { me: currentUser, friend: userId },
+        { $set: { me: currentUser, friend: userId } },
+        { upsert: true }
+      );
     }
-
 
     res.status(200).json({
       success: true,
-      message: 'success'
-    })
-    
+      message: "success",
+    });
   } catch (err) {
-    next(err)
+    next(err);
   }
-}
+};
 
 exports.getAllFriends = async (req, res, next) => {
   try {
-    const currentUser = req.user.id
-    const friends = await Friends.find({ me: currentUser }).populate('friend', 'firstname surname profilePics');
+    const currentUser = req.user.id;
+    const friends = await Friends.find({ me: currentUser }).populate(
+      "friend",
+      "firstname surname profilePics"
+    );
     res.status(200).json({
       success: true,
       message: "success",
       data: {
-        friends
-      }
-    })
-
+        friends,
+      },
+    });
   } catch (err) {
     next(err);
   }
-}
+};
