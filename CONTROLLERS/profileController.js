@@ -346,6 +346,10 @@ exports.getUserFriendStatus = async (req, res, next) => {
         }
       } else if (friendRequest.status === "Accepted") {
         status = "Friends";
+        await SendRequest.findByIdAndDelete(friendRequest._id);
+      } else if (friendRequest.status === "Rejected") {
+        await SendRequest.findByIdAndDelete(friendRequest._id);
+
       }
     }
 
@@ -403,19 +407,18 @@ exports.getAllFriends = async (req, res, next) => {
   try {
     const currentUser = req.user.id;
     const friends = await Friends.find({
-      $or: [{me: currentUser}, {friend: currentUser}]
-    }).populate(
-      "friend",
-      "firstname surname profilePics"
-    ).populate("me", "firstname surname profilePics");
+      $or: [{ me: currentUser }, { friend: currentUser }],
+    })
+      .populate("friend", "firstname surname profilePics")
+      .populate("me", "firstname surname profilePics");
 
-    const friendList = friends.map(f => {
+    const friendList = friends.map((f) => {
       if (f.me._id.toString() === currentUser) {
         return f.friend;
       } else {
         return f.me;
       }
-    })
+    });
     res.status(200).json({
       success: true,
       message: "success",
