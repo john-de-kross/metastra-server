@@ -405,7 +405,10 @@ exports.acceptOrRejectRequest = async (req, res, next) => {
 
 exports.getAllFriends = async (req, res, next) => {
   try {
-    const currentUser = req.user.id;
+    const { userId } = req.params;
+    const currentUser = userId 
+    if (!currentUser) return next(new AppError("Access denied", 403));
+
     const friends = await Friends.find({
       $or: [{ me: currentUser }, { friend: currentUser }],
     })

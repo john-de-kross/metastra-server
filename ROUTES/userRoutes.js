@@ -53,5 +53,5 @@ router.get('/get-all-requests', protect, getAllRequests)
 router.post('/logout', protect, logOutUser);
 router.get('/get-friend-status/:userId', protect, getUserFriendStatus);
 router.post('/accept-reject-request', protect, acceptOrRejectRequest);
-router.get('/get-all-friends', protect, getAllFriends);
+router.get('/get-all-friends/:userId', protect, getAllFriends);
 module.exports = router;
