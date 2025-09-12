@@ -324,6 +324,9 @@ exports.getUserFriendStatus = async (req, res, next) => {
     const currentUser = req.user.id;
     const profileOwner = await User.findById(userId);
 
+    const friend = await Friends.findOne({me: currentUser, friend: userId})
+      
+
     if (!userId)
       return next(new AppError("Parameter is needed for this operation", 400));
     if (!profileOwner) return next(new AppError("This user does not exists"));
@@ -336,6 +339,10 @@ exports.getUserFriendStatus = async (req, res, next) => {
     }).select("sender receiver status");
 
     let status = "Add friend";
+
+    if (friend) {
+      return status = "Friends"
+    }
 
     if (friendRequest) {
       if (friendRequest.status === "Pending") {
