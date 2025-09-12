@@ -324,7 +324,12 @@ exports.getUserFriendStatus = async (req, res, next) => {
     const currentUser = req.user.id;
     const profileOwner = await User.findById(userId);
 
-    const friend = await Friends.findOne({me: currentUser, friend: userId})
+    const friend = await Friends.findOne({
+      $or: [
+        { me: currentUser, friend: userId },
+        {me: userId, friend: currentUser}
+      ]
+    })
       
 
     if (!userId)
