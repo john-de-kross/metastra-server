@@ -341,7 +341,7 @@ exports.getUserFriendStatus = async (req, res, next) => {
     let status = "Add friend";
 
     if (friend) {
-      return status = "Friends"
+      status = "Friends"
     }
 
     if (friendRequest) {
