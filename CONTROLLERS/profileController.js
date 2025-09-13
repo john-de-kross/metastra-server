@@ -301,11 +301,19 @@ exports.getAllRequests = async (req, res, next) => {
     const user = await User.findById(userId);
 
     if (!user) return next(new AppError("User not found", 404));
+    const friends = await Friends.find({ me: userId });
+    const friendId = friends.map(f => f.friend.toString());
+
+   await SendRequest.deleteMany({
+      receiver: userId,
+      sender: {$in: friendId}
+    })
 
     const requests = await SendRequest.find({ receiver: userId }).populate(
       "sender",
       "firstname surname profilePics"
     );
+
     res.status(200).json({
       success: true,
       message: "success",
@@ -327,10 +335,9 @@ exports.getUserFriendStatus = async (req, res, next) => {
     const friend = await Friends.findOne({
       $or: [
         { me: currentUser, friend: userId },
-        {me: userId, friend: currentUser}
-      ]
-    })
-      
+        { me: userId, friend: currentUser },
+      ],
+    });
 
     if (!userId)
       return next(new AppError("Parameter is needed for this operation", 400));
@@ -346,8 +353,7 @@ exports.getUserFriendStatus = async (req, res, next) => {
     let status = "Add friend";
 
     if (friend) {
-      status = "Friends"
-
+      status = "Friends";
     }
 
     if (friendRequest) {
@@ -362,7 +368,6 @@ exports.getUserFriendStatus = async (req, res, next) => {
         await SendRequest.findByIdAndDelete(friendRequest._id);
       } else if (friendRequest.status === "Rejected") {
         await SendRequest.findByIdAndDelete(friendRequest._id);
-
       }
     }
 
@@ -400,7 +405,7 @@ exports.acceptOrRejectRequest = async (req, res, next) => {
     if (!request) return next(new AppError("No request found", 404));
 
     if (status === "Accepted") {
-      await SendRequest.findByIdAndDelete(request._id)
+      await SendRequest.findByIdAndDelete(request._id);
       await Friends.updateOne(
         { me: currentUser, friend: userId },
         { $set: { me: currentUser, friend: userId } },
@@ -420,7 +425,7 @@ exports.acceptOrRejectRequest = async (req, res, next) => {
 exports.getAllFriends = async (req, res, next) => {
   try {
     const { userId } = req.params;
-    const currentUser = userId 
+    const currentUser = userId;
     if (!currentUser) return next(new AppError("Access denied", 403));
 
     const friends = await Friends.find({
