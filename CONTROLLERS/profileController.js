@@ -347,6 +347,7 @@ exports.getUserFriendStatus = async (req, res, next) => {
 
     if (friend) {
       status = "Friends"
+
     }
 
     if (friendRequest) {
@@ -399,6 +400,7 @@ exports.acceptOrRejectRequest = async (req, res, next) => {
     if (!request) return next(new AppError("No request found", 404));
 
     if (status === "Accepted") {
+      await SendRequest.findByIdAndDelete(request._id)
       await Friends.updateOne(
         { me: currentUser, friend: userId },
         { $set: { me: currentUser, friend: userId } },
