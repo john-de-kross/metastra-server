@@ -33,6 +33,14 @@ io.on("connection", (socket) => {
 
     io.emit("user-online", userId);
     console.log("userSocketMap:", [...userSocketMap.keys()])
+  });
+
+  socket.on('send_message', (data) => {
+    const user = userSocketMap.get(data.userId);
+    if (user) {
+      io.to(user).emit("receive_message", data)
+
+    }
   })
 
   socket.on("get-user-status", (userId, callback) => {

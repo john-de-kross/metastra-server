@@ -457,11 +457,9 @@ exports.getAllFriends = async (req, res, next) => {
 exports.sendMessage = async (req, res, next) => {
   try {
     const { userId, message, media } = req.body;
-    const io = req.app.get("io");
-    const userSocketMap = req.app.get("userSocketMap");
     const currentUser = req.user.id
     const user = await User.findById(userId);
-    if (!user) return next(new AppError("User does not exit", 404));
+    if (!user) return next(new AppError("User does not exist", 404));
     if (!message && !media) return next(new AppError("Can't send an empty message", 400));
 
     const content = await Message.create({ sender: currentUser, receiver: userId, content: message })
@@ -472,15 +470,6 @@ exports.sendMessage = async (req, res, next) => {
       data: { content }
     });
 
-    const receiverSocketMapId = userSocketMap.get(user._id);
-
-    if (receiverSocketMapId) {
-      io.to(receiverSocketMapId).emit("receive_message", {
-        message: message,
-        senderId: currentUser,
-        receiverId: userId
-      })
-    }
 
   } catch (err) {
     next(err)
