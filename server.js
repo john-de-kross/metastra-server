@@ -48,6 +48,13 @@ io.on("connection", (socket) => {
     const lastSeen = lastSeenMap.get(userId) || null;
     callback({ isOnline, lastSeen });
   })
+
+  socket.on("typing", (data) => {
+    const user = userSocketMap.get(data.receiverId);
+    if (user) {
+      io.to(user).emit("typing", data);
+    }
+  })
   socket.on("disconnect", () => {
     for (const [userId, id] of userSocketMap.entries()) {
       if (id === socket.id) {
