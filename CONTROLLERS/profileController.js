@@ -456,23 +456,23 @@ exports.getAllFriends = async (req, res, next) => {
 
 exports.sendMessage = async (req, res, next) => {
   try {
-    const { userId, message, media } = req.body;
+    const { userId, content, media } = req.body;
     const currentUser = req.user.id;
     const user = await User.findById(userId);
     if (!user) return next(new AppError("User does not exist", 404));
-    if (!message && !media)
+    if (!content && !media)
       return next(new AppError("Can't send an empty message", 400));
 
-    const content = await Message.create({
+    const msg = await Message.create({
       sender: currentUser,
       receiver: userId,
-      content: message,
+      content
     });
 
     res.status(200).json({
       success: true,
       message: "success",
-      data: { content },
+      data: { msg },
     });
   } catch (err) {
     next(err);
