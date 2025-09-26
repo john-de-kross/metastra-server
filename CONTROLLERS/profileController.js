@@ -456,8 +456,9 @@ exports.getAllFriends = async (req, res, next) => {
 
 exports.sendMessage = async (req, res, next) => {
   try {
-    const { userId, content, media } = req.body;
+    const { receiver, content, media } = req.body;
     const currentUser = req.user.id;
+    const userId = receiver;
     const user = await User.findById(userId);
     if (!user) return next(new AppError("User does not exist", 404));
     if (!content && !media)
