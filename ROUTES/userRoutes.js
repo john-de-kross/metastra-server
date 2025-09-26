@@ -23,7 +23,8 @@ const {
     getUserFriendStatus,
     acceptOrRejectRequest,
     getAllFriends,
-    sendMessage
+    sendMessage,
+    getChats
 } = require('../CONTROLLERS/profileController');
 const { protect } = require('../MIDDLEWARE/protect');
 const { profilePicsUpdate } = require('../CONTROLLERS/profilePicsController');
@@ -55,5 +56,6 @@ router.post('/logout', protect, logOutUser);
 router.get('/get-friend-status/:userId', protect, getUserFriendStatus);
 router.post('/accept-reject-request', protect, acceptOrRejectRequest);
 router.get('/get-all-friends/:userId', protect, getAllFriends);
-router.post('/message', protect, sendMessage)
+router.post('/message', protect, sendMessage);
+router.get('/chats/:receiverId', protect, getChats);
 module.exports = router;

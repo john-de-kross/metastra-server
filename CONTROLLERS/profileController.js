@@ -303,12 +303,12 @@ exports.getAllRequests = async (req, res, next) => {
 
     if (!user) return next(new AppError("User not found", 404));
     const friends = await Friends.find({ me: userId });
-    const friendId = friends.map(f => f.friend.toString());
+    const friendId = friends.map((f) => f.friend.toString());
 
-   await SendRequest.deleteMany({
+    await SendRequest.deleteMany({
       receiver: userId,
-      sender: {$in: friendId}
-    })
+      sender: { $in: friendId },
+    });
 
     const requests = await SendRequest.find({ receiver: userId }).populate(
       "sender",
@@ -457,21 +457,50 @@ exports.getAllFriends = async (req, res, next) => {
 exports.sendMessage = async (req, res, next) => {
   try {
     const { userId, message, media } = req.body;
-    const currentUser = req.user.id
+    const currentUser = req.user.id;
     const user = await User.findById(userId);
     if (!user) return next(new AppError("User does not exist", 404));
-    if (!message && !media) return next(new AppError("Can't send an empty message", 400));
+    if (!message && !media)
+      return next(new AppError("Can't send an empty message", 400));
 
-    const content = await Message.create({ sender: currentUser, receiver: userId, content: message })
-    
+    const content = await Message.create({
+      sender: currentUser,
+      receiver: userId,
+      content: message,
+    });
+
     res.status(200).json({
       success: true,
       message: "success",
-      data: { content }
+      data: { content },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getChats = async (req, res, next) => {
+  try {
+    const currentUser = req.user.id;
+    const { receiverId } = req.params;
+    const user = await User.findById(receiverId);
+
+    if (!receiverId) return next(new AppError("request body is missing", 400));
+    if (!user) return next(new AppError("user is not found", 404));
+
+    const chatHistory = await Message.find({
+      $or: [
+        { sender: currentUser, receiver: receiverId },
+        { sender: receiverId, receiver: currentUser },
+      ],
     });
 
-
+    res.status(200).json({
+      success: true,
+      message: "success",
+      data: { chatHistory },
+    });
   } catch (err) {
-    next(err)
+    next(err);
   }
-}
+};
