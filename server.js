@@ -53,8 +53,8 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("markAsSeen", ({ messageId, chatId, userId }) => {
-    const user = userSocketMap.get(userID);
+  socket.on("markAsSeen", ({ messageId, userId }) => {
+    const user = userSocketMap.get(userId);
     if (user) {
       io.to(user).emit("messageSeen", { messageId, userId });
       Message.findByIdAndUpdate(messageId, { seen: true }, { new: true })
