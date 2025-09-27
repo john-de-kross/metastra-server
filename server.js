@@ -4,7 +4,7 @@ const http = require("http");
 const dotenv = require("dotenv");
 const { Server } = require("socket.io");
 const User = require("./MODELS/userModel");
-const Message = require("./MODELS/messageModel");
+const Message = require("./MODELS/message");
 dotenv.config({ path: "./config.env" });
 
 mongoose
